@@ -6,7 +6,7 @@ let io: SocketIOServer;
 export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
   io = new SocketIOServer(httpServer, {
     cors: {
-      origin: true, // Reflect request origin
+      origin: ['https://connect-ecru-mu.vercel.app', 'http://localhost:3000'],
       methods: ['GET', 'POST'],
       credentials: true,
     },
