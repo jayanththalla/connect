@@ -11,7 +11,7 @@ export function useSocket(userId?: string) {
 
   useEffect(() => {
     if (!socket) {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com';
       socket = io(apiUrl, {
         path: '/api/socket',
         addTrailingSlash: false,

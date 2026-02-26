@@ -177,7 +177,7 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
     setShowScrollButton(false);
     setNewMessagesCount(0);
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/conversations/${conversation._id}/messages?page=1&limit=50`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/${conversation._id}/messages?page=1&limit=50`)
       .then((res) => res.ok ? res.json() : null)
       .then((data) => {
         if (data && conversationIdRef.current === conversation._id) {

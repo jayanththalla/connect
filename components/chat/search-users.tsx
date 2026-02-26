@@ -27,7 +27,7 @@ export default function SearchUsers({ onSelectUser }: SearchUsersProps) {
 
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/users/search?q=${encodeURIComponent(value)}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/users/search?q=${encodeURIComponent(value)}`);
       if (response.ok) {
         const data = await response.json();
         setResults(data);
