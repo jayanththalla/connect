@@ -50,7 +50,7 @@ export default function ProfileSettingsModal({
 
     setSaving(true);
     try {
-      const response = await fetch('/api/users/profile', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/users/profile`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -177,7 +177,7 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
     setShowScrollButton(false);
     setNewMessagesCount(0);
 
-    fetch(`/api/conversations/${conversation._id}/messages?page=1&limit=50`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/conversations/${conversation._id}/messages?page=1&limit=50`)
       .then((res) => res.ok ? res.json() : null)
       .then((data) => {
         if (data && conversationIdRef.current === conversation._id) {
@@ -194,7 +194,7 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
       .catch(console.error)
       .finally(() => setLoadingMessages(false));
 
-    fetch(`/api/conversations/${conversation._id}/read`, { method: 'POST' })
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/conversations/${conversation._id}/read`, { method: 'POST' })
       .then(() => onMessagesReadRef.current())
       .catch(() => {});
   }, [conversation._id]);
@@ -222,7 +222,7 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
         }
       }
 
-      fetch(`/api/conversations/${convId}/read`, { method: 'POST' })
+      fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/conversations/${convId}/read`, { method: 'POST' })
         .then(() => {
           onMessagesReadRef.current();
           socket.emit('mark-read', { conversationId: convId, userId: user?.id });
@@ -314,7 +314,7 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
 
     try {
       const response = await fetch(
-        `/api/conversations/${conversationIdRef.current}/messages?page=${nextPage}&limit=50`
+        `${process.env.NEXT_PUBLIC_API_URL || ''}/api/conversations/${conversationIdRef.current}/messages?page=${nextPage}&limit=50`
       );
       if (response.ok) {
         const data = await response.json();
@@ -405,7 +405,7 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
         body.replyTo = optimisticMessage.replyTo;
       }
 
-      const response = await fetch(`/api/conversations/${conversation._id}/messages`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/conversations/${conversation._id}/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -452,7 +452,7 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
   const handleDeleteMessage = async (messageId: string) => {
     try {
       const response = await fetch(
-        `/api/conversations/${conversation._id}/messages/${messageId}`,
+        `${process.env.NEXT_PUBLIC_API_URL || ''}/api/conversations/${conversation._id}/messages/${messageId}`,
         { method: 'DELETE' }
       );
       if (response.ok) {

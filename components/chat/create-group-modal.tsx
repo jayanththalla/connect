@@ -59,7 +59,7 @@ export default function CreateGroupModal({
 
     setSearching(true);
     try {
-      const response = await fetch(`/api/users/search?q=${encodeURIComponent(value)}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/users/search?q=${encodeURIComponent(value)}`);
       if (response.ok) {
         const data = await response.json();
         const filteredData = data.filter(
@@ -94,7 +94,7 @@ export default function CreateGroupModal({
 
     setLoading(true);
     try {
-      const response = await fetch('/api/conversations/group', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/conversations/group`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

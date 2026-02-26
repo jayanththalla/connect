@@ -6,7 +6,7 @@ let io: SocketIOServer;
 export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
   io = new SocketIOServer(httpServer, {
     cors: {
-      origin: process.env.NODE_ENV === 'production' ? undefined : ['http://localhost:3000'],
+      origin: true, // Reflect request origin
       methods: ['GET', 'POST'],
       credentials: true,
     },

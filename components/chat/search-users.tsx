@@ -27,7 +27,7 @@ export default function SearchUsers({ onSelectUser }: SearchUsersProps) {
 
     setLoading(true);
     try {
-      const response = await fetch(`/api/users/search?q=${encodeURIComponent(value)}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/users/search?q=${encodeURIComponent(value)}`);
       if (response.ok) {
         const data = await response.json();
         setResults(data);
@@ -41,7 +41,7 @@ export default function SearchUsers({ onSelectUser }: SearchUsersProps) {
 
   const handleSelectUser = async (user: User) => {
     try {
-      const response = await fetch('/api/conversations', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/conversations`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

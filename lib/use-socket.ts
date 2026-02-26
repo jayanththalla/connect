@@ -11,7 +11,8 @@ export function useSocket(userId?: string) {
 
   useEffect(() => {
     if (!socket) {
-      socket = io({
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+      socket = io(apiUrl, {
         path: '/api/socket',
         addTrailingSlash: false,
         reconnection: true,
