@@ -57,6 +57,7 @@ export default function ProfileSettingsModal({
           username: username.trim(),
           bio: bio.trim(),
         }),
+        credentials: 'include',
       });
 
       if (!response.ok) {

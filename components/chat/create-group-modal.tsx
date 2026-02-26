@@ -59,7 +59,7 @@ export default function CreateGroupModal({
 
     setSearching(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/users/search?q=${encodeURIComponent(value)}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/users/search?q=${encodeURIComponent(value)}`, { credentials: 'include' });
       if (response.ok) {
         const data = await response.json();
         const filteredData = data.filter(
@@ -101,6 +101,7 @@ export default function CreateGroupModal({
           name: groupName,
           participantIds: selectedUsers.map((u) => u._id),
         }),
+        credentials: 'include',
       });
 
       if (response.ok) {

@@ -38,6 +38,7 @@ export default function RegisterPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, username, password }),
+        credentials: 'include',
       });
 
       if (!response.ok) {

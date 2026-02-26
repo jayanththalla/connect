@@ -177,7 +177,7 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
     setShowScrollButton(false);
     setNewMessagesCount(0);
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/${conversation._id}/messages?page=1&limit=50`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/${conversation._id}/messages?page=1&limit=50`, { credentials: 'include' })
       .then((res) => res.ok ? res.json() : null)
       .then((data) => {
         if (data && conversationIdRef.current === conversation._id) {
@@ -194,7 +194,10 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
       .catch(console.error)
       .finally(() => setLoadingMessages(false));
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/${conversation._id}/read`, { method: 'POST' })
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/${conversation._id}/read`, { 
+      method: 'POST',
+      credentials: 'include'
+    })
       .then(() => onMessagesReadRef.current())
       .catch(() => {});
   }, [conversation._id]);
@@ -222,7 +225,10 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
         }
       }
 
-      fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/${convId}/read`, { method: 'POST' })
+      fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/${convId}/read`, { 
+        method: 'POST',
+        credentials: 'include'
+      })
         .then(() => {
           onMessagesReadRef.current();
           socket.emit('mark-read', { conversationId: convId, userId: user?.id });
@@ -314,7 +320,8 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/${conversationIdRef.current}/messages?page=${nextPage}&limit=50`
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/${conversationIdRef.current}/messages?page=${nextPage}&limit=50`,
+        { credentials: 'include' }
       );
       if (response.ok) {
         const data = await response.json();
@@ -409,6 +416,7 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -453,7 +461,10 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/${conversation._id}/messages/${messageId}`,
-        { method: 'DELETE' }
+        { 
+          method: 'DELETE',
+          credentials: 'include'
+        }
       );
       if (response.ok) {
         setMessages((prev) =>

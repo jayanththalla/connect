@@ -79,7 +79,7 @@ export default function ChatPage() {
     const checkAuth = async () => {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com';
-        const response = await fetch(`${apiUrl}/api/auth/me`);
+        const response = await fetch(`${apiUrl}/api/auth/me`, { credentials: 'include' });
         if (!response.ok) {
           router.push('/login');
           return;
@@ -96,7 +96,7 @@ export default function ChatPage() {
   const loadConversations = useCallback(async () => {
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com';
-      const response = await fetch(`${apiUrl}/api/conversations`);
+      const response = await fetch(`${apiUrl}/api/conversations`, { credentials: 'include' });
       if (response.ok) {
         const data = await response.json();
         setConversations(data);
@@ -303,7 +303,10 @@ export default function ChatPage() {
               onClick={async () => {
                 try {
                   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com';
-                  await fetch(`${apiUrl}/api/auth/logout`, { method: 'POST' });
+                  await fetch(`${apiUrl}/api/auth/logout`, { 
+                    method: 'POST',
+                    credentials: 'include'
+                  });
                 } catch {}
                 router.push('/login');
               }}
