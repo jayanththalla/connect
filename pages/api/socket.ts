@@ -47,6 +47,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponseWithSoc
     const io = new SocketIOServer(res.socket.server, {
         path: '/api/socket',
         addTrailingSlash: false,
+        cors: {
+            origin: ['https://connect-ecru-mu.vercel.app', 'http://localhost:3000'],
+            methods: ['GET', 'POST'],
+            credentials: true,
+        },
     });
     res.socket.server.io = io;
 

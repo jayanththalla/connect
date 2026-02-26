@@ -41,7 +41,7 @@ export default function SearchUsers({ onSelectUser }: SearchUsersProps) {
 
   const handleSelectUser = async (user: User) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/conversations`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

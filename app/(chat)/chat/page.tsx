@@ -78,7 +78,8 @@ export default function ChatPage() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('/api/auth/me');
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com';
+        const response = await fetch(`${apiUrl}/api/auth/me`);
         if (!response.ok) {
           router.push('/login');
           return;
@@ -94,7 +95,8 @@ export default function ChatPage() {
 
   const loadConversations = useCallback(async () => {
     try {
-      const response = await fetch('/api/conversations');
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com';
+      const response = await fetch(`${apiUrl}/api/conversations`);
       if (response.ok) {
         const data = await response.json();
         setConversations(data);
@@ -300,7 +302,8 @@ export default function ChatPage() {
             <button
               onClick={async () => {
                 try {
-                  await fetch('/api/auth/logout', { method: 'POST' });
+                  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com';
+                  await fetch(`${apiUrl}/api/auth/logout`, { method: 'POST' });
                 } catch {}
                 router.push('/login');
               }}
