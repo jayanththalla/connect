@@ -41,10 +41,11 @@ export async function POST(request: NextRequest) {
       { expiresIn: '7d' }
     );
 
-    // Set httpOnly cookie
+    // Return token in body for cross-origin + set cookie as fallback
     const response = NextResponse.json(
       {
         message: 'Login successful',
+        token,
         user: {
           id: user._id.toString(),
           email: user.email,

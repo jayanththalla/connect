@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import { authFetch } from '@/lib/client-auth';
 
 interface ProfileSettingsModalProps {
   isOpen: boolean;
@@ -50,14 +51,13 @@ export default function ProfileSettingsModal({
 
     setSaving(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/users/profile`, {
+      const response = await authFetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/users/profile`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           username: username.trim(),
           bio: bio.trim(),
         }),
-        credentials: 'include',
       });
 
       if (!response.ok) {

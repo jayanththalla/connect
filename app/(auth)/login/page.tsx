@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 
+import { setToken } from '@/lib/client-auth';
+
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -32,6 +34,11 @@ export default function LoginPage() {
         const data = await response.json();
         setError(data.error || 'Login failed');
         return;
+      }
+
+      const data = await response.json();
+      if (data.token) {
+        setToken(data.token);
       }
 
       router.push('/chat');

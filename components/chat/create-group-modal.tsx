@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { authFetch } from '@/lib/client-auth';
 
 interface User {
   _id: string;
@@ -59,7 +60,7 @@ export default function CreateGroupModal({
 
     setSearching(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/users/search?q=${encodeURIComponent(value)}`, { credentials: 'include' });
+      const response = await authFetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/users/search?q=${encodeURIComponent(value)}`);
       if (response.ok) {
         const data = await response.json();
         const filteredData = data.filter(
@@ -94,14 +95,13 @@ export default function CreateGroupModal({
 
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/group`, {
+      const response = await authFetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/group`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: groupName,
           participantIds: selectedUsers.map((u) => u._id),
         }),
-        credentials: 'include',
       });
 
       if (response.ok) {

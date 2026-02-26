@@ -8,6 +8,7 @@ import SearchUsers from '@/components/chat/search-users';
 import CreateGroupModal from '@/components/chat/create-group-modal';
 import ProfileSettingsModal from '@/components/chat/profile-settings-modal';
 import { useSocket } from '@/lib/use-socket';
+import { authFetch, clearToken } from '@/lib/client-auth';
 
 interface UserData {
   id: string;
@@ -79,7 +80,7 @@ export default function ChatPage() {
     const checkAuth = async () => {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com';
-        const response = await fetch(`${apiUrl}/api/auth/me`, { credentials: 'include' });
+        const response = await authFetch(`${apiUrl}/api/auth/me`);
         if (!response.ok) {
           router.push('/login');
           return;
@@ -96,7 +97,7 @@ export default function ChatPage() {
   const loadConversations = useCallback(async () => {
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com';
-      const response = await fetch(`${apiUrl}/api/conversations`, { credentials: 'include' });
+      const response = await authFetch(`${apiUrl}/api/conversations`);
       if (response.ok) {
         const data = await response.json();
         setConversations(data);
@@ -303,11 +304,9 @@ export default function ChatPage() {
               onClick={async () => {
                 try {
                   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com';
-                  await fetch(`${apiUrl}/api/auth/logout`, { 
-                    method: 'POST',
-                    credentials: 'include'
-                  });
+                  await authFetch(`${apiUrl}/api/auth/logout`, { method: 'POST' });
                 } catch {}
+                clearToken();
                 router.push('/login');
               }}
               className="p-2 hover:bg-muted rounded-lg transition-colors flex-shrink-0"

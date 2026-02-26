@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSocket } from '@/lib/use-socket';
+import { authFetch } from '@/lib/client-auth';
 
 // ─── Emoji Data ─────────────────────────────────────────
 const EMOJI_CATEGORIES: { label: string; emojis: string[] }[] = [
@@ -177,7 +178,7 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
     setShowScrollButton(false);
     setNewMessagesCount(0);
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/${conversation._id}/messages?page=1&limit=50`, { credentials: 'include' })
+    authFetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/${conversation._id}/messages?page=1&limit=50`)
       .then((res) => res.ok ? res.json() : null)
       .then((data) => {
         if (data && conversationIdRef.current === conversation._id) {
@@ -194,9 +195,8 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
       .catch(console.error)
       .finally(() => setLoadingMessages(false));
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/${conversation._id}/read`, { 
+    authFetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/${conversation._id}/read`, { 
       method: 'POST',
-      credentials: 'include'
     })
       .then(() => onMessagesReadRef.current())
       .catch(() => {});
@@ -225,9 +225,8 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
         }
       }
 
-      fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/${convId}/read`, { 
+      authFetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/${convId}/read`, { 
         method: 'POST',
-        credentials: 'include'
       })
         .then(() => {
           onMessagesReadRef.current();
@@ -319,9 +318,8 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
     const nextPage = pageRef.current + 1;
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/${conversationIdRef.current}/messages?page=${nextPage}&limit=50`,
-        { credentials: 'include' }
+      const response = await authFetch(
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/${conversationIdRef.current}/messages?page=${nextPage}&limit=50`
       );
       if (response.ok) {
         const data = await response.json();
@@ -412,11 +410,10 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
         body.replyTo = optimisticMessage.replyTo;
       }
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/${conversation._id}/messages`, {
+      const response = await authFetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/${conversation._id}/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
-        credentials: 'include',
       });
 
       if (response.ok) {
@@ -459,12 +456,9 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
   // Delete message
   const handleDeleteMessage = async (messageId: string) => {
     try {
-      const response = await fetch(
+      const response = await authFetch(
         `${process.env.NEXT_PUBLIC_API_URL || 'https://connect-1mcn.onrender.com'}/api/conversations/${conversation._id}/messages/${messageId}`,
-        { 
-          method: 'DELETE',
-          credentials: 'include'
-        }
+        { method: 'DELETE' }
       );
       if (response.ok) {
         setMessages((prev) =>
