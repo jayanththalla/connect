@@ -137,7 +137,7 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingMessages, setLoadingMessages] = useState(true);
-  const [isTyping, setIsTyping] = useState<string | null>(null);
+  const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
   const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -170,7 +170,7 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
     setLoadingMessages(true);
     setHasMore(false);
     setLoadingMore(false);
-    setIsTyping(null);
+    setTypingUsers(new Set());
     setReplyingTo(null);
     setShowEmojiPicker(false);
     setContextMenu(null);
@@ -236,11 +236,27 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
     };
 
     const handleUserTyping = (data: { conversationId: string; username: string }) => {
-      if (data.conversationId === convId) setIsTyping(data.username);
+      if (data.conversationId === convId && data.username) {
+        setTypingUsers((prev) => {
+          const next = new Set(prev);
+          next.add(data.username);
+          return next;
+        });
+      }
     };
 
-    const handleUserStopTyping = (data: { conversationId: string }) => {
-      if (data.conversationId === convId) setIsTyping(null);
+    const handleUserStopTyping = (data: { conversationId: string; username?: string }) => {
+      if (data.conversationId === convId) {
+        if (data.username) {
+          setTypingUsers((prev) => {
+            const next = new Set(prev);
+            next.delete(data.username!);
+            return next;
+          });
+        } else {
+          setTypingUsers(new Set());
+        }
+      }
     };
 
     const handleMessagesRead = (data: { conversationId: string; userId: string }) => {
@@ -426,7 +442,7 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
 
         if (socket) {
           socket.emit('send-message', { conversationId: conversation._id, message: confirmedMessage });
-          socket.emit('stop-typing', { conversationId: conversation._id });
+          socket.emit('stop-typing', { conversationId: conversation._id, username: user?.username });
         }
         onMessagesReadRef.current();
       } else {
@@ -446,10 +462,10 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
       socket.emit('typing', { conversationId: conversation._id, username: user?.username });
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
       typingTimeoutRef.current = setTimeout(() => {
-        if (socket) socket.emit('stop-typing', { conversationId: conversation._id });
+        if (socket) socket.emit('stop-typing', { conversationId: conversation._id, username: user?.username });
       }, 2000);
     } else if (socket) {
-      socket.emit('stop-typing', { conversationId: conversation._id });
+      socket.emit('stop-typing', { conversationId: conversation._id, username: user?.username });
     }
   };
 
@@ -571,8 +587,16 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
             {getConversationTitle()}
           </h2>
           <p className="text-xs text-muted-foreground">
-            {isTyping ? (
-              <span className="text-primary italic">typing...</span>
+            {typingUsers.size > 0 ? (
+              <span className="text-primary italic">
+                {conversation.type === 'dm'
+                  ? `${[...typingUsers][0]} is typing...`
+                  : typingUsers.size === 1
+                    ? `${[...typingUsers][0]} is typing...`
+                    : typingUsers.size === 2
+                      ? `${[...typingUsers].join(' and ')} are typing...`
+                      : 'Several people are typing...'}
+              </span>
             ) : (
               getPresenceInfo()
             )}
@@ -737,9 +761,12 @@ export default function ChatWindow({ conversation, user, onlineUsers, onBack, on
         )}
 
         {/* Typing indicator */}
-        {isTyping && (
+        {typingUsers.size > 0 && (
           <div className="flex justify-start mb-1 message-animate">
             <div className="bg-[var(--chat-bubble-other)] px-4 py-2.5 rounded-lg rounded-tl-none shadow-sm">
+              <div className="text-[11px] text-primary font-medium mb-1">
+                {[...typingUsers].join(', ')}
+              </div>
               <div className="flex gap-1.5 items-center h-4">
                 <div className="w-2 h-2 bg-muted-foreground/60 rounded-full typing-dot" />
                 <div className="w-2 h-2 bg-muted-foreground/60 rounded-full typing-dot" />

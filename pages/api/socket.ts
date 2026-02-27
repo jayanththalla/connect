@@ -95,10 +95,12 @@ export default function handler(req: NextApiRequest, res: NextApiResponseWithSoc
         });
 
         // Handle stop typing
-        socket.on('stop-typing', (data: { conversationId: string }) => {
+        socket.on('stop-typing', (data: { conversationId: string; username?: string }) => {
             const conversationId = typeof data === 'string' ? data : data.conversationId;
+            const username = typeof data === 'string' ? '' : (data.username || '');
             socket.to(`conversation:${conversationId}`).emit('user-stop-typing', {
                 conversationId,
+                username,
             });
         });
 

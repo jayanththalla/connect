@@ -35,13 +35,19 @@ export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
     // Handle typing indicator
     socket.on('typing', (data: { conversationId: string; username: string }) => {
       socket.broadcast.to(`conversation:${data.conversationId}`).emit('user-typing', {
+        conversationId: data.conversationId,
         username: data.username,
       });
     });
 
     // Handle stop typing
-    socket.on('stop-typing', (conversationId: string) => {
-      socket.broadcast.to(`conversation:${conversationId}`).emit('user-stop-typing');
+    socket.on('stop-typing', (data: { conversationId: string; username?: string } | string) => {
+      const conversationId = typeof data === 'string' ? data : data.conversationId;
+      const username = typeof data === 'string' ? '' : (data.username || '');
+      socket.broadcast.to(`conversation:${conversationId}`).emit('user-stop-typing', {
+        conversationId,
+        username,
+      });
     });
 
     // User status update
