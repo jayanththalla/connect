@@ -240,38 +240,69 @@ export default function ChatPage() {
         <div className="p-4 border-b border-border flex-shrink-0">
           <div className="flex items-center justify-between mb-3">
             <h1 className="text-2xl font-bold text-foreground">Connect</h1>
-            <div className="flex gap-1">
-              <button
-                onClick={() => setShowCreateGroup(true)}
-                className="p-2 hover:bg-muted rounded-lg transition-colors"
-                title="Create group chat"
-              >
-                <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-              </button>
+            <div className="flex gap-1.5">
+              {/* New Chat — person+ icon, clearly labeled */}
               <button
                 onClick={() => setShowSearch(!showSearch)}
-                className="p-2 hover:bg-muted rounded-lg transition-colors"
-                title="Find users"
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  showSearch
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'bg-muted hover:bg-primary/10 text-muted-foreground hover:text-foreground'
+                }`}
+                title="Find a user and start a new chat"
               >
-                <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 8v3m0 0v3m0-3h3m-3 0h-3" />
                 </svg>
+                <span className="hidden sm:inline">New Chat</span>
+              </button>
+
+              {/* New Group — group+ icon */}
+              <button
+                onClick={() => setShowCreateGroup(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-muted hover:bg-primary/10 text-muted-foreground hover:text-foreground transition-all"
+                title="Create a group chat"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span className="hidden sm:inline">Group</span>
               </button>
             </div>
           </div>
-          {showSearch && <SearchUsers onSelectUser={handleNewConversation} />}
+
+          {/* Find User Panel — slides in with clear heading */}
+          {showSearch && (
+            <div className="animate-in slide-in-from-top-2 duration-200">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs font-medium text-muted-foreground tracking-wide uppercase">
+                  Find a user to chat with
+                </p>
+                <button
+                  onClick={() => setShowSearch(false)}
+                  className="p-1 hover:bg-muted rounded-md transition-colors"
+                  title="Close"
+                >
+                  <svg className="w-3.5 h-3.5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <SearchUsers onSelectUser={handleNewConversation} />
+            </div>
+          )}
         </div>
 
         {/* Conversations List */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto mt-2">
           <ConversationList
             conversations={conversations}
             selectedConversation={selectedConversation}
             onSelectConversation={handleSelectConversation}
             onlineUsers={onlineUsers}
             currentUserId={user.id}
+            hideSearch={showSearch}
           />
         </div>
 
